@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeEase | Programming Made Friendly</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ce-deep-navy: #001D39;
+            --ce-dark-blue: #0A4174;
+            --ce-muted-blue: #49769F;
+            --ce-teal-blue: #4E8EA2;
+            --ce-soft-cyan: #6EA2B3;
+            --ce-light-sky: #7BBDE8;
+            --ce-very-light: #BDD8E9;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--ce-deep-navy);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        .ce-bg-main {
+            background: linear-gradient(135deg, var(--ce-deep-navy) 0%, var(--ce-dark-blue) 100%);
+            min-height: 100vh;
+        }
+
+        .ce-mesh-hero {
+            background: radial-gradient(circle at 20% 30%, var(--ce-dark-blue) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 70%, var(--ce-muted-blue) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 10%, var(--ce-deep-navy) 0%, transparent 40%);
+        }
+
+        .ce-glass {
+            background: rgba(189, 216, 233, 0.1);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(123, 189, 232, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 29, 57, 0.37);
+        }
+
+        .ce-card {
+            background: var(--ce-very-light);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 25px -5px rgba(0, 29, 57, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .ce-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px -10px rgba(0, 29, 57, 0.15);
+            border-color: var(--ce-light-sky);
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--ce-deep-navy); }
+        ::-webkit-scrollbar-thumb { 
+            background: var(--ce-muted-blue); 
+            border-radius: 10px;
+        }
+
+        @keyframes subtle-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+        .ce-animate-float { animation: subtle-float 8s ease-in-out infinite; }
+
+        .ce-gradient-text {
+            background: linear-gradient(90deg, var(--ce-light-sky), var(--ce-soft-cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.39.0",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+    "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js",
+    "firebase/": "https://esm.sh/firebase@^12.9.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="ce-bg-main">
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
