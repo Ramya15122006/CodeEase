@@ -29,7 +29,6 @@ export default defineConfig(({ mode }) => {
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),
-          'node-domexception': path.resolve(__dirname, 'src/polyfills/domexception.ts'),
         }
       }
     };
