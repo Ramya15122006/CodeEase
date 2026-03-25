@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CodeEase | Programming Made Friendly</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --ce-deep-navy: #001D39;
@@ -16,13 +16,18 @@
             --ce-soft-cyan: #6EA2B3;
             --ce-light-sky: #7BBDE8;
             --ce-very-light: #BDD8E9;
+            --ce-accent-orange: #FF6321;
+            --ce-radius-sm: 12px;
+            --ce-radius-md: 16px;
+            --ce-radius-lg: 24px;
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Poppins', sans-serif;
             background-color: var(--ce-deep-navy);
             color: #ffffff;
             overflow-x: hidden;
+            letter-spacing: -0.01em;
         }
 
         .mono { font-family: 'JetBrains Mono', monospace; }
@@ -39,45 +44,124 @@
         }
 
         .ce-glass {
-            background: rgba(189, 216, 233, 0.1);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(123, 189, 232, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(0, 29, 57, 0.37);
+            background: rgba(10, 65, 116, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(123, 189, 232, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease-in-out;
         }
 
         .ce-card {
-            background: var(--ce-very-light);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 10px 25px -5px rgba(0, 29, 57, 0.08);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--ce-radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease-in-out;
         }
 
         .ce-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px -10px rgba(0, 29, 57, 0.15);
+            transform: translateY(-6px);
+            background: rgba(255, 255, 255, 0.06);
             border-color: var(--ce-light-sky);
+            box-shadow: 0 15px 35px -10px rgba(123, 189, 232, 0.2);
         }
 
-        ::-webkit-scrollbar { width: 8px; }
+        .ce-btn {
+            border-radius: var(--ce-radius-sm);
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .ce-btn:hover {
+            transform: scale(1.03);
+        }
+
+        .ce-btn:active {
+            transform: scale(0.97);
+        }
+
+        .ce-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--ce-radius-sm);
+            padding: 12px 16px;
+            color: white;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .ce-input:focus {
+            outline: none;
+            border-color: var(--ce-light-sky);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(123, 189, 232, 0.2);
+        }
+
+        .ce-glow-blue {
+            box-shadow: 0 0 20px rgba(123, 189, 232, 0.15);
+        }
+        .ce-glow-blue:hover {
+            box-shadow: 0 0 30px rgba(123, 189, 232, 0.3);
+        }
+
+        .ce-glow-orange {
+            box-shadow: 0 0 20px rgba(255, 99, 33, 0.15);
+        }
+        .ce-glow-orange:hover {
+            box-shadow: 0 0 30px rgba(255, 99, 33, 0.3);
+        }
+
+        .ce-heading {
+            color: #ffffff;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .ce-text-muted {
+            color: var(--ce-soft-cyan);
+            font-weight: 500;
+        }
+
+        ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: var(--ce-deep-navy); }
         ::-webkit-scrollbar-thumb { 
             background: var(--ce-muted-blue); 
             border-radius: 10px;
+            border: 3px solid var(--ce-deep-navy);
         }
 
         @keyframes subtle-float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
+            50% { transform: translateY(-10px); }
         }
-        .ce-animate-float { animation: subtle-float 8s ease-in-out infinite; }
+        .ce-animate-float { animation: subtle-float 5s ease-in-out infinite; }
 
         .ce-gradient-text {
-            background: linear-gradient(90deg, var(--ce-light-sky), var(--ce-soft-cyan));
+            background: linear-gradient(135deg, #ffffff 0%, var(--ce-light-sky) 100%);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+        }
+
+        .ce-accent-btn {
+            background: var(--ce-accent-orange);
+            color: #ffffff;
+            border-radius: var(--ce-radius-sm);
+            box-shadow: 0 4px 15px rgba(255, 99, 33, 0.3);
+            transition: all 0.2s ease-in-out;
+            font-weight: 700;
+        }
+        .ce-accent-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 99, 33, 0.5);
+        }
+        .ce-accent-btn:active {
+            transform: scale(0.95);
         }
     </style>
 <script type="importmap">

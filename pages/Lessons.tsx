@@ -34,51 +34,52 @@ const CURRICULUM_DATA = [
 
 export const Lessons: React.FC = () => {
   return (
-    <div className="space-y-24 pb-32">
-      <header className="relative p-16 md:p-20 rounded-[3rem] ce-glass border border-[#BDD8E9]/10">
-        <div className="inline-block px-4 py-1 bg-[#0A4174] text-[#7BBDE8] rounded-full text-[10px] font-black uppercase tracking-widest mb-6">Learning Pathways</div>
-        <h1 className="text-5xl md:text-7xl font-black text-[#BDD8E9] tracking-tighter uppercase mb-4">Master Your <span className="ce-gradient-text italic">Curriculum.</span></h1>
-        <p className="text-xl text-[#6EA2B3] font-bold italic opacity-80 max-w-2xl">Structured 9-section modules designed for BTech students. Each path includes visual logic flows, interactive labs, and graduation assessments.</p>
+    <div className="space-y-40 pb-40">
+      <header className="relative p-20 md:p-32 rounded-[4rem] ce-glass border border-white/10 overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[#7BBDE8] opacity-5 blur-[120px]" />
+        <div className="inline-block px-6 py-2 bg-[#0A4174] text-[#7BBDE8] rounded-full text-[11px] font-black uppercase tracking-[0.4em] mb-10">Learning Pathways</div>
+        <h1 className="text-6xl md:text-9xl ce-heading mb-8">Master Your <span className="ce-gradient-text italic">Curriculum.</span></h1>
+        <p className="text-2xl text-[#BDD8E9]/80 font-bold italic max-w-3xl leading-relaxed">Structured 9-section modules designed for BTech students. Each path includes visual logic flows, interactive labs, and graduation assessments.</p>
       </header>
 
-      <section className="space-y-12">
-        <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-l-4 border-[#7BBDE8] pl-8">
-          <div>
-            <h2 className="text-5xl font-black tracking-tighter uppercase text-[#BDD8E9]">Specialist <span className="text-[#7BBDE8] italic">Paths</span></h2>
-            <p className="text-[#6EA2B3] font-bold mt-2">Select a language to begin your journey from zero to certified master.</p>
+      <section className="space-y-20">
+        <div className="flex flex-col md:flex-row justify-between items-end gap-10 border-l-8 border-[#7BBDE8] pl-12">
+          <div className="space-y-4">
+            <h2 className="text-6xl font-black tracking-tighter uppercase text-white">Specialist <span className="text-[#7BBDE8] italic">Paths</span></h2>
+            <p className="text-[#6EA2B3] text-xl font-bold">Select a language to begin your journey from zero to certified master.</p>
           </div>
-          <Link to="/exam-hall" className="px-8 py-4 ce-glass text-[#BDD8E9] border border-[#BDD8E9]/20 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#BDD8E9]/10 transition-all">
+          <Link to="/exam-hall" className="px-12 py-6 ce-glass text-white border-2 border-white/10 rounded-[var(--ce-radius-sm)] font-bold text-sm uppercase tracking-[0.2em] hover:bg-white/10 transition-all shadow-2xl ce-btn">
             Go to Exam Hall 📝
           </Link>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {CURRICULUM_DATA.map((path) => (
-            <div key={path.id} className="ce-glass p-12 rounded-[3.5rem] flex flex-col justify-between border border-[#BDD8E9]/5 hover:border-[#7BBDE8]/30 transition-all group relative overflow-hidden">
-              <div className={`absolute top-0 right-0 w-24 h-24 ${path.accent} opacity-5 blur-3xl group-hover:opacity-20 transition-opacity`} />
+            <div key={path.id} className="ce-card p-14 flex flex-col justify-between border border-white/5 group relative overflow-hidden">
+              <div className={`absolute top-0 right-0 w-32 h-32 ${path.accent} opacity-5 blur-[80px] group-hover:opacity-20 transition-opacity`} />
               
-              <div className="space-y-6">
+              <div className="space-y-10">
                 <div className="flex justify-between items-start">
-                  <div className="text-6xl group-hover:scale-110 transition-transform duration-500">{path.icon}</div>
-                  <span className="px-4 py-1 bg-white/5 border border-white/5 text-[#6EA2B3] rounded-lg text-[9px] font-black uppercase tracking-widest">{path.difficulty}</span>
+                  <div className="text-7xl group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 drop-shadow-2xl">{path.icon}</div>
+                  <span className="px-5 py-2 bg-white/5 border border-white/10 text-[#7BBDE8] rounded-xl text-[10px] font-bold uppercase tracking-[0.2em]">{path.difficulty}</span>
                 </div>
                 
-                <div>
-                  <h3 className="text-3xl font-black text-[#BDD8E9] tracking-tight leading-tight">{path.name}</h3>
-                  <p className="text-[#6EA2B3] text-sm mt-4 font-bold italic leading-relaxed opacity-80">{path.description}</p>
+                <div className="space-y-6">
+                  <h3 className="text-4xl font-bold text-white tracking-tight leading-tight uppercase">{path.name}</h3>
+                  <p className="text-[#6EA2B3] text-lg font-medium italic leading-relaxed opacity-90">{path.description}</p>
                 </div>
               </div>
 
-              <div className="mt-12 pt-8 border-t border-white/5 space-y-4">
-                <div className="flex gap-2">
+              <div className="mt-16 pt-10 border-t border-white/5 space-y-8">
+                <div className="flex gap-3">
                    {[1,2,3,4,5,6,7,8,9].map(n => (
-                     <div key={n} className="h-1 flex-1 bg-white/5 rounded-full overflow-hidden">
+                     <div key={n} className="h-1.5 flex-1 bg-white/5 rounded-full overflow-hidden">
                        <div className={`h-full ${path.accent} opacity-20`} style={{ width: '100%' }} />
                      </div>
                    ))}
                 </div>
-                <p className="text-[10px] font-black text-[#49769F] uppercase tracking-widest text-center">9 Core Logic Modules</p>
-                <Link to={path.path} className="block w-full py-5 bg-[#BDD8E9] text-[#001D39] rounded-[1.5rem] font-black text-sm uppercase text-center shadow-lg hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all">Start Specialty 🚀</Link>
+                <p className="text-[11px] font-bold text-[#49769F] uppercase tracking-[0.4em] text-center">9 Core Logic Modules</p>
+                <Link to={path.path} className="block w-full py-6 ce-accent-btn rounded-[var(--ce-radius-sm)] font-bold text-sm uppercase text-center tracking-[0.2em] ce-btn">Start Specialty 🚀</Link>
               </div>
             </div>
           ))}
@@ -86,15 +87,15 @@ export const Lessons: React.FC = () => {
       </section>
 
       {/* Logic Sandbox CTA */}
-      <section className="ce-glass p-16 rounded-[4rem] border border-indigo-500/20 relative overflow-hidden">
+      <section className="ce-glass p-20 rounded-[var(--ce-radius-lg)] border border-indigo-500/20 relative overflow-hidden shadow-2xl">
          <div className="absolute inset-0 bg-indigo-600/5 pointer-events-none" />
-         <div className="relative z-10 flex flex-col md:flex-row items-center gap-12 text-center md:text-left">
-            <div className="text-8xl">🧪</div>
-            <div className="flex-1 space-y-4">
-               <h2 className="text-4xl font-black text-[#BDD8E9] uppercase tracking-tighter">Need a <span className="text-indigo-400">Logic Sandbox?</span></h2>
-               <p className="text-lg text-[#6EA2B3] font-bold italic max-w-xl">Not ready for a curriculum? Experiment freely in our AI Sandbox and let Codey explain your logic step-by-step.</p>
+         <div className="relative z-10 flex flex-col lg:flex-row items-center gap-16 text-center lg:text-left">
+            <div className="text-9xl drop-shadow-2xl ce-animate-float">🧪</div>
+            <div className="flex-1 space-y-6">
+               <h2 className="text-5xl font-bold text-white uppercase tracking-tighter">Need a <span className="text-[#7BBDE8] italic">Logic Sandbox?</span></h2>
+               <p className="text-xl text-[#6EA2B3] font-medium italic max-w-2xl leading-relaxed">Not ready for a curriculum? Experiment freely in our AI Sandbox and let Codey explain your logic step-by-step.</p>
             </div>
-            <Link to="/practice" className="px-12 py-6 bg-indigo-600 text-white rounded-[2rem] font-black text-lg uppercase tracking-widest shadow-2xl hover:bg-indigo-500 transition-colors">Enter Sandbox</Link>
+            <Link to="/practice" className="px-14 py-7 bg-indigo-600 text-white rounded-[var(--ce-radius-sm)] font-bold text-xl uppercase tracking-[0.2em] shadow-2xl hover:bg-indigo-500 transition-all ce-btn">Enter Sandbox</Link>
          </div>
       </section>
     </div>

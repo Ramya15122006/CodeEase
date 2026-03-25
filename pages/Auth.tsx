@@ -1,32 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { initializeApp } from 'firebase/app';
-import { 
-  getAuth, 
-  signInWithPopup, 
-  GoogleAuthProvider, 
-  onAuthStateChanged 
-} from 'firebase/auth';
-
-// Firebase configuration (using placeholders - replace with actual keys if required)
-const firebaseConfig = {
-  apiKey: process.env.API_KEY, // Assuming API_KEY is set in env
-  authDomain: "codeease-academy.firebaseapp.com",
-  projectId: "codeease-academy",
-  storageBucket: "codeease-academy.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef123456"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
+import { auth, googleProvider } from '../src/firebase';
+import { signInWithPopup } from 'firebase/auth';
 
 export const Auth: React.FC = () => {
   const navigate = useNavigate();
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -34,61 +14,114 @@ export const Auth: React.FC = () => {
 
   // Check for existing session on mount
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in, store locally and redirect
-        localStorage.setItem('ce_user_session', JSON.stringify({
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          photoURL: user.photoURL
-        }));
-        navigate('/');
-      }
-    });
-    return () => unsubscribe();
+    const session = localStorage.getItem('ce_user_session');
+    if (session) {
+      navigate('/home');
+    }
   }, [navigate]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate legacy auth and redirect
+    setError(null);
+
+    // Simulate a slight delay for better UX
     setTimeout(() => {
-      localStorage.setItem('ce_user_session', JSON.stringify({ email, displayName: email.split('@')[0] }));
-      setIsLoading(false);
-      navigate('/');
+      const usersRaw = localStorage.getItem('ce_users_collection');
+      const users = usersRaw ? JSON.parse(usersRaw) : {};
+
+      if (isLogin) {
+        // Login Logic
+        const user = users[email];
+        if (user && user.password === password) {
+          localStorage.setItem('ce_user_session', JSON.stringify({ 
+            email, 
+            displayName: user.name || email.split('@')[0],
+            uid: email // Using email as a simple UID for this demo
+          }));
+          setIsLoading(false);
+          navigate('/home');
+        } else {
+          setIsLoading(false);
+          setError("Invalid email or password. Please try again.");
+        }
+      } else {
+        // Create Account Logic
+        if (users[email]) {
+          setIsLoading(false);
+          setError("An account with this email already exists.");
+        } else {
+          users[email] = { 
+            name: email.split('@')[0], 
+            password,
+            createdAt: new Date().toISOString(),
+            xp: 0,
+            level: 1
+          };
+          localStorage.setItem('ce_users_collection', JSON.stringify(users));
+          localStorage.setItem('ce_user_session', JSON.stringify({ 
+            email, 
+            displayName: email.split('@')[0],
+            uid: email 
+          }));
+          setIsLoading(false);
+          navigate('/home');
+        }
+      }
     }, 1000);
   };
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     setError(null);
+    
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
+      // Attempt real Firebase login if config is provided
+      // Note: This will fail with "YOUR_API_KEY" placeholder
+      if (auth.app.options.apiKey !== "YOUR_API_KEY") {
+        const result = await signInWithPopup(auth, googleProvider);
+        const user = result.user;
+        
+        localStorage.setItem('ce_user_session', JSON.stringify({
+          email: user.email,
+          displayName: user.displayName,
+          uid: user.uid
+        }));
+        
+        navigate('/home');
+        return;
+      }
+    } catch (err: any) {
+      console.warn("Firebase login failed, falling back to simulation:", err.message);
+    }
+
+    // Fallback to simulation since real setup was declined
+    setTimeout(() => {
+      const googleUser = {
+        email: "google.user@example.com",
+        displayName: "Google Student",
+        uid: "google_12345"
+      };
       
-      // Store user info in local "database" (localStorage for pure frontend architecture)
+      localStorage.setItem('ce_user_session', JSON.stringify(googleUser));
+      
+      // Ensure user exists in our local "collection"
       const usersRaw = localStorage.getItem('ce_users_collection');
       const users = usersRaw ? JSON.parse(usersRaw) : {};
-      
-      if (!users[user.uid]) {
-        users[user.uid] = {
-          name: user.displayName,
-          email: user.email,
+      if (!users[googleUser.email]) {
+        users[googleUser.email] = {
+          name: googleUser.displayName,
           createdAt: new Date().toISOString(),
           xp: 0,
-          level: 1
+          level: 1,
+          isGoogleUser: true
         };
         localStorage.setItem('ce_users_collection', JSON.stringify(users));
       }
       
-      // Persistence is handled by Firebase onAuthStateChanged
       setIsLoading(false);
-      navigate('/');
-    } catch (err: any) {
-      setIsLoading(false);
-      setError(err.message || "Failed to authenticate with Google. Please try again.");
-    }
+      navigate('/home'); // Redirect to /home as requested
+    }, 1500);
   };
 
   return (
@@ -104,11 +137,11 @@ export const Auth: React.FC = () => {
       {/* Top Navigation Bar */}
       <nav className="relative z-20 px-8 py-6 flex flex-wrap items-center justify-between gap-6 max-w-7xl mx-auto w-full">
         <div className="flex items-center gap-12">
-          <h2 className="text-2xl font-black text-[#BDD8E9] tracking-tighter cursor-pointer" onClick={() => navigate('/')}>
+          <h2 className="text-2xl font-black text-[#BDD8E9] tracking-tighter cursor-pointer" onClick={() => navigate('/home')}>
             CODE<span className="text-[#7BBDE8]">EASE</span>
           </h2>
           <ul className="hidden md:flex items-center gap-8 text-xs font-black uppercase tracking-widest text-[#6EA2B3]">
-            <li className="hover:text-[#7BBDE8] cursor-pointer transition-colors" onClick={() => navigate('/')}>Home</li>
+            <li className="hover:text-[#7BBDE8] cursor-pointer transition-colors" onClick={() => navigate('/home')}>Home</li>
             <li className="hover:text-[#7BBDE8] cursor-pointer transition-colors">Service</li>
             <li className="hover:text-[#7BBDE8] cursor-pointer transition-colors">Contact</li>
             <li className="hover:text-[#7BBDE8] cursor-pointer transition-colors">About</li>
@@ -160,36 +193,36 @@ export const Auth: React.FC = () => {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-[#7BBDE8] uppercase tracking-[0.2em] ml-2">Email Address</label>
+                <label className="text-[10px] font-bold text-[#7BBDE8] uppercase tracking-[0.2em] ml-2">Email Address</label>
                 <input 
                   type="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-[#001D39]/40 border border-white/10 rounded-2xl p-4 text-white text-sm outline-none focus:border-[#7BBDE8] focus:ring-4 focus:ring-[#7BBDE8]/10 transition-all" 
+                  className="w-full ce-input text-sm" 
                   placeholder="name@university.edu"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-[#7BBDE8] uppercase tracking-[0.2em] ml-2">Password</label>
+                <label className="text-[10px] font-bold text-[#7BBDE8] uppercase tracking-[0.2em] ml-2">Password</label>
                 <input 
                   type="password" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-[#001D39]/40 border border-white/10 rounded-2xl p-4 text-white text-sm outline-none focus:border-[#7BBDE8] focus:ring-4 focus:ring-[#7BBDE8]/10 transition-all" 
+                  className="w-full ce-input text-sm" 
                   placeholder="••••••••"
                   required
                 />
                 {isLogin && (
-                  <p className="text-right text-[9px] font-black text-[#6EA2B3] uppercase tracking-widest cursor-pointer hover:text-[#7BBDE8]">Forgot Password?</p>
+                  <p className="text-right text-[9px] font-bold text-[#6EA2B3] uppercase tracking-widest cursor-pointer hover:text-[#7BBDE8] transition-colors">Forgot Password?</p>
                 )}
               </div>
 
               <button 
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-5 bg-gradient-to-r from-[#7BBDE8] to-[#4E8EA2] text-[#001D39] rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all mt-4 disabled:opacity-50"
+                className="w-full py-5 bg-gradient-to-r from-[#7BBDE8] to-[#4E8EA2] text-[#001D39] rounded-[var(--ce-radius-sm)] font-bold text-xs uppercase tracking-[0.2em] shadow-xl ce-btn mt-4 disabled:opacity-50"
               >
                 {isLogin ? 'Sign In Now' : 'Sign Up Free'}
               </button>
@@ -200,7 +233,7 @@ export const Auth: React.FC = () => {
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-white/10"></div>
                 </div>
-                <div className="relative flex justify-center text-[10px] font-black uppercase tracking-widest">
+                <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-widest">
                   <span className="bg-[#0c1e33] px-4 text-[#49769F]">Or Continue With</span>
                 </div>
               </div>
@@ -210,9 +243,9 @@ export const Auth: React.FC = () => {
                 <button 
                   onClick={handleGoogleLogin}
                   disabled={isLoading}
-                  className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors group disabled:opacity-50"
+                  className="w-14 h-14 rounded-[var(--ce-radius-sm)] bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors group disabled:opacity-50 ce-btn"
                 >
-                  <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center font-black text-[#001D39] text-xs">G</div>
+                  <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center font-bold text-[#001D39] text-xs">G</div>
                 </button>
                 {/* Facebook Icon Placeholder */}
                 <button 

@@ -1,42 +1,62 @@
 
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
-import { Home } from './pages/Home';
-import { Lessons } from './pages/Lessons';
-import { LessonDetail } from './pages/LessonDetail';
-import { Forum } from './pages/Forum';
-import { Profile } from './pages/Profile';
-import { Practice } from './pages/Practice';
-import { CTutorial } from './pages/CTutorial';
-import { PythonTutorial } from './pages/PythonTutorial';
-import { JavaTutorial } from './pages/JavaTutorial';
-import { ExamHall } from './pages/ExamHall';
-import { ProgressTracker } from './pages/ProgressTracker';
-import { LiveEditor } from './pages/LiveEditor';
-import { Auth } from './pages/Auth';
+
+// Lazy load page components
+const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })));
+const Lessons = lazy(() => import('./pages/Lessons').then(m => ({ default: m.Lessons })));
+const LessonDetail = lazy(() => import('./pages/LessonDetail').then(m => ({ default: m.LessonDetail })));
+const Forum = lazy(() => import('./pages/Forum').then(m => ({ default: m.Forum })));
+const Profile = lazy(() => import('./pages/Profile').then(m => ({ default: m.Profile })));
+const Practice = lazy(() => import('./pages/Practice').then(m => ({ default: m.Practice })));
+const CTutorial = lazy(() => import('./pages/CTutorial').then(m => ({ default: m.CTutorial })));
+const PythonTutorial = lazy(() => import('./pages/PythonTutorial').then(m => ({ default: m.PythonTutorial })));
+const JavaTutorial = lazy(() => import('./pages/JavaTutorial').then(m => ({ default: m.JavaTutorial })));
+const ExamHall = lazy(() => import('./pages/ExamHall').then(m => ({ default: m.ExamHall })));
+const ProgressTracker = lazy(() => import('./pages/ProgressTracker').then(m => ({ default: m.ProgressTracker })));
+const LiveEditor = lazy(() => import('./pages/LiveEditor').then(m => ({ default: m.LiveEditor })));
+const Auth = lazy(() => import('./pages/Auth').then(m => ({ default: m.Auth })));
+
+// Loading component for Suspense
+const PageLoader: React.FC = () => (
+  <div className="flex items-center justify-center min-h-screen bg-[#001D39]">
+    <div className="w-12 h-12 border-4 border-[#7BBDE8]/20 border-t-[#7BBDE8] rounded-full animate-spin"></div>
+  </div>
+);
+
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const session = localStorage.getItem('ce_user_session');
+  if (!session) {
+    return <Auth />;
+  }
+  return <>{children}</>;
+};
 
 const App: React.FC = () => {
   return (
     <Router>
-      <Routes>
-        {/* Auth page is outside of the main layout */}
-        <Route path="/auth" element={<Auth />} />
-        
-        {/* All other routes are wrapped in Layout */}
-        <Route path="/" element={<Layout><Home /></Layout>} />
-        <Route path="/lessons" element={<Layout><Lessons /></Layout>} />
-        <Route path="/lesson/:id" element={<Layout><LessonDetail /></Layout>} />
-        <Route path="/forum" element={<Layout><Forum /></Layout>} />
-        <Route path="/profile" element={<Layout><Profile /></Layout>} />
-        <Route path="/practice" element={<Layout><Practice /></Layout>} />
-        <Route path="/tutorial/c" element={<Layout><CTutorial /></Layout>} />
-        <Route path="/tutorial/python" element={<Layout><PythonTutorial /></Layout>} />
-        <Route path="/tutorial/java" element={<Layout><JavaTutorial /></Layout>} />
-        <Route path="/exam-hall" element={<Layout><ExamHall /></Layout>} />
-        <Route path="/progress" element={<Layout><ProgressTracker /></Layout>} />
-        <Route path="/compiler" element={<Layout><LiveEditor /></Layout>} />
-      </Routes>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          {/* Auth page is available directly */}
+          <Route path="/auth" element={<Auth />} />
+          
+          {/* All other routes are protected and wrapped in Layout */}
+          <Route path="/" element={<ProtectedRoute><Layout><Home /></Layout></ProtectedRoute>} />
+          <Route path="/home" element={<ProtectedRoute><Layout><Home /></Layout></ProtectedRoute>} />
+          <Route path="/lessons" element={<ProtectedRoute><Layout><Lessons /></Layout></ProtectedRoute>} />
+          <Route path="/lesson/:id" element={<ProtectedRoute><Layout><LessonDetail /></Layout></ProtectedRoute>} />
+          <Route path="/forum" element={<ProtectedRoute><Layout><Forum /></Layout></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Layout><Profile /></Layout></ProtectedRoute>} />
+          <Route path="/practice" element={<ProtectedRoute><Layout><Practice /></Layout></ProtectedRoute>} />
+          <Route path="/tutorial/c" element={<ProtectedRoute><Layout><CTutorial /></Layout></ProtectedRoute>} />
+          <Route path="/tutorial/python" element={<ProtectedRoute><Layout><PythonTutorial /></Layout></ProtectedRoute>} />
+          <Route path="/tutorial/java" element={<ProtectedRoute><Layout><JavaTutorial /></Layout></ProtectedRoute>} />
+          <Route path="/exam-hall" element={<ProtectedRoute><Layout><ExamHall /></Layout></ProtectedRoute>} />
+          <Route path="/progress" element={<ProtectedRoute><Layout><ProgressTracker /></Layout></ProtectedRoute>} />
+          <Route path="/compiler" element={<ProtectedRoute><Layout><LiveEditor /></Layout></ProtectedRoute>} />
+        </Routes>
+      </Suspense>
     </Router>
   );
 };
